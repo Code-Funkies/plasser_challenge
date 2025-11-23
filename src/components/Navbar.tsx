@@ -48,7 +48,7 @@ const Navbar: React.FC<NavbarProps> = ({ brandName, brandHref, onLoginClick }) =
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   return (
-    <header className="w-full bg-black py-2 px-4 rounded-2xl shadow-lg mt-1">
+    <header className="w-full bg-black py-2 px-4 rounded-3xl shadow-lg mt-1">
       <nav className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo y hamburguesa */}
         <div className="flex items-center gap-4">

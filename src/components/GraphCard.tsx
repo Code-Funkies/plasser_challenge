@@ -10,7 +10,7 @@ interface GraphCardProps {
  */
 const GraphCard: React.FC<GraphCardProps> = ({ title, children }) => {
   return (
-    <div className="bg-white rounded-lg shadow-md p-3 flex flex-col h-full overflow-hidden">
+    <div className="bg-white rounded-3xl shadow-md p-6 flex flex-col h-full overflow-hidden">
       <div className="flex items-center justify-between mb-2 shrink-0">
         <h4 className="text-xs font-semibold text-gray-700">{title}</h4>
       </div>
