@@ -94,11 +94,16 @@ const Navbar: React.FC<NavbarProps> = ({ brandName, brandHref, onLoginClick }) =
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-end">
               <span className="text-white font-semibold text-sm leading-tight">Peter</span>
-              <span className="text-neutral-400 text-xs">@Funkie</span>
+              <span className="text-neutral-400 text-xs">@Plasser-User</span>
             </div>
             <div className="relative">
-              <span className="inline-block w-10 h-10 rounded-full bg-neutral-700 border-2 border-neutral-600"></span>
-              <span className="absolute top-0 right-0 block w-5 h-5 bg-red-600 text-xs text-white rounded-full border-2 border-black flex items-center justify-center font-bold" style={{fontSize:'0.75rem',lineHeight:'1.25rem'}}>2</span>
+              <span className="w-10 h-10 rounded-full bg-neutral-700 border-2 border-neutral-600 text-white flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <circle cx="12" cy="8" r="3.5" />
+                  <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                </svg>
+              </span>
+              <span className="absolute top-0 right-0 w-5 h-5 bg-red-600 text-xs text-white rounded-full border-2 border-black flex items-center justify-center font-bold" style={{fontSize:'0.75rem',lineHeight:'1.25rem'}}>2</span>
             </div>
           </div>
         </div>
