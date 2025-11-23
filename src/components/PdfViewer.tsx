@@ -9,9 +9,16 @@ interface MaintenanceData {
     total_points: number;
 }
 
+interface AIReport {
+    report: string;
+    recommendations: string[];
+}
+
 const PdfViewer = () => {
     const [data, setData] = useState<MaintenanceData | null>(null);
+    const [aiReport, setAiReport] = useState<AIReport | null>(null);
     const [loading, setLoading] = useState(true);
+    const [aiLoading, setAiLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -34,6 +41,9 @@ const PdfViewer = () => {
 
                 const apiData: MaintenanceData = await response.json();
                 setData(apiData);
+
+                // Fetch AI-generated report
+                await fetchAIReport(apiData);
             } catch (err) {
                 setError(err instanceof Error ? err.message : 'Unknown error');
             } finally {
@@ -44,10 +54,64 @@ const PdfViewer = () => {
         fetchData();
     }, []);
 
+    const fetchAIReport = async (maintenanceData: MaintenanceData) => {
+        try {
+            setAiLoading(true);
+            const response = await fetch('http://localhost:8000/api/generate-report', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    maintenance_data: maintenanceData
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Error generating AI report');
+            }
+
+            const reportData: AIReport = await response.json();
+            setAiReport(reportData);
+        } catch (err) {
+            console.error('AI Report generation failed:', err);
+            // Don't fail the whole component if AI report fails
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full p-10">
-                <div className="text-gray-500">Loading report data...</div>
+                <div className="flex flex-col items-center justify-center space-y-6">
+                    <div className="relative">
+                        {/* Outer spinning ring */}
+                        <div className="absolute inset-0 rounded-full border-4 border-neutral-200 animate-ping"></div>
+                        {/* Middle spinning ring */}
+                        <div className="relative rounded-full border-8 border-t-neutral-900 border-r-neutral-600 border-b-neutral-300 border-l-neutral-900 w-24 h-24 animate-spin"></div>
+                        {/* Inner pulsing circle */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-16 h-16 bg-neutral-700 rounded-full animate-pulse opacity-50"></div>
+                        </div>
+                    </div>
+                    
+                    <div className="text-center space-y-2">
+                        <p className="text-2xl font-bold text-neutral-900 animate-pulse">
+                            Thinking...
+                        </p>
+                        <p className="text-gray-600 animate-pulse">
+                            Loading maintenance data
+                        </p>
+                    </div>
+
+                    {/* Animated dots */}
+                    <div className="flex space-x-2">
+                        <div className="w-3 h-3 bg-neutral-800 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                        <div className="w-3 h-3 bg-neutral-800 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                        <div className="w-3 h-3 bg-neutral-800 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                </div>
             </div>
         );
     }
@@ -168,55 +232,58 @@ const PdfViewer = () => {
                     Predictive Maintenance Report
                 </h1>
                 
-                <div className="space-y-4 text-gray-700">
-                    <section>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                            Executive Summary
-                        </h2>
-                        <p className="leading-relaxed">
-                            This report presents a cost projection analysis for preventive maintenance 
-                            based on {data.total_points} identified critical points. The average risk 
-                            factor calculated is {(data.avg_risk_factor * 100).toFixed(1)}%.
-                        </p>
-                    </section>
+                {aiLoading ? (
+                    <div className="flex flex-col items-center justify-center py-16 space-y-6">
+                        <div className="relative">
+                            {/* Outer spinning ring */}
+                            <div className="absolute inset-0 rounded-full border-4 border-neutral-200 animate-ping"></div>
+                            {/* Middle spinning ring */}
+                            <div className="relative rounded-full border-8 border-t-neutral-900 border-r-neutral-600 border-b-neutral-300 border-l-neutral-900 w-24 h-24 animate-spin"></div>
+                            {/* Inner pulsing circle */}
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-16 h-16 bg-neutral-700 rounded-full animate-pulse opacity-50"></div>
+                            </div>
+                        </div>
+                        
+                        <div className="text-center space-y-2">
+                            <p className="text-2xl font-bold text-neutral-900 animate-pulse">
+                                Thinking...
+                            </p>
+                            <p className="text-gray-600 animate-pulse">
+                                Analyzing maintenance data and generating insights
+                            </p>
+                        </div>
 
-                    <section>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                            Optimal Maintenance Windows
-                        </h2>
-                        <p className="leading-relaxed">
-                            {data.annotations.length} optimal maintenance windows have been identified 
-                            where projected costs reach their minimum values. Performing maintenance 
-                            during these windows can result in significant savings.
-                        </p>
-                        <ul className="list-disc list-inside mt-2 space-y-1">
-                            {data.annotations.map((annotation, idx) => {
-                                const futureDate = new Date();
-                                futureDate.setMonth(futureDate.getMonth() + annotation.month);
-                                const dateStr = futureDate.toLocaleDateString('en-US', { 
-                                    month: 'long', 
-                                    year: 'numeric' 
-                                });
-                                return (
-                                    <li key={idx}>
-                                        <strong>{dateStr}:</strong> Minimum cost of ${annotation.cost.toFixed(2)}
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </section>
-
-                    <section>
-                        <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                            Recommendations
-                        </h2>
-                        <p className="leading-relaxed">
-                            It is recommended to schedule maintenance interventions during the identified 
-                            windows to optimize costs and minimize operational impact. The analysis projects 
-                            costs over a {Math.max(...data.series_data.map(d => d.x)).toFixed(1)} month horizon.
-                        </p>
-                    </section>
-                </div>
+                        {/* Animated dots */}
+                        <div className="flex space-x-2">
+                            <div className="w-3 h-3 bg-neutral-800 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                            <div className="w-3 h-3 bg-neutral-800 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                            <div className="w-3 h-3 bg-neutral-800 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                        </div>
+                    </div>
+                ) : aiReport ? (
+                    <div className="bg-gradient-to-r from-gray-50 to-neutral-100 border-l-4 border-neutral-900 p-6 rounded-r-lg shadow-md">
+                        <h3 className="text-2xl font-bold text-neutral-900 mb-4">
+                            AI-Generated Analysis
+                        </h3>
+                        <div className="text-gray-800 whitespace-pre-wrap leading-relaxed text-lg mb-6">
+                            {aiReport.report}
+                        </div>
+                        {aiReport.recommendations.length > 0 && (
+                            <div className="bg-white bg-opacity-60 rounded-lg p-4 backdrop-blur">
+                                <h4 className="font-bold text-neutral-900 mb-3 text-xl">Key Recommendations:</h4>
+                                <ul className="space-y-2">
+                                    {aiReport.recommendations.map((rec, idx) => (
+                                        <li key={idx} className="flex items-start gap-3">
+                                            <span className="text-neutral-800 font-bold mt-1">•</span>
+                                            <span className="text-gray-700 flex-1">{rec}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                ) : null}
             </div>
 
             {/* Chart section */}
