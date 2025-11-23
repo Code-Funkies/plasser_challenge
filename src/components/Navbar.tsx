@@ -1,97 +1,31 @@
 import React from 'react';
-import NavLink from './NavLink';
-import NavbarMobileToggle from './NavbarMobileToggle';
-import type { NavItem, NavbarProps } from '../types/navbar.types';
 
-// SVG Icons
-const HomeIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8" />
-    <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+// Data icon
+const DataIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="me-2">
+    <rect x="3" y="11" width="4" height="7" rx="1"/>
+    <rect x="9" y="7" width="4" height="11" rx="1"/>
+    <rect x="15" y="4" width="4" height="14" rx="1"/>
+  </svg>
+);
+// Reports icon
+const ReportsIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" className="me-2">
+    <rect x="3" y="3" width="18" height="18" rx="2"/>
+    <path d="M8 9h8M8 13h6M8 17h4"/>
+  </svg>
+);
+// Search icon
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+    <circle cx="11" cy="11" r="7"/>
+    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
   </svg>
 );
 
-const AccountIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
-
-const WorkIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M12 12h.01" />
-    <path d="M16 6V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2" />
-    <path d="M22 13a18.15 18.15 0 0 1-20 0" />
-    <rect width="20" height="14" x="2" y="6" rx="2" />
-  </svg>
-);
-
-const BlogIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
-    <path d="M18 14h-8" />
-    <path d="M15 18h-5" />
-    <path d="M10 6h8v4h-8V6Z" />
-  </svg>
-);
-
-const LoginIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
-    <circle cx="12" cy="7" r="4" />
-  </svg>
-);
+interface NavbarProps {
+  // Puedes expandir si necesitas props
+}
 
 /**
  * Navbar component - Main navigation bar with responsive design
@@ -106,83 +40,79 @@ const LoginIcon = () => (
  * @param navItems - Array of navigation items (default: predefined items)
  * @param onLoginClick - Callback for login button click
  */
-const Navbar: React.FC<NavbarProps> = ({
-  brandName = 'Brand',
-  brandHref = '#',
-  navItems,
-  onLoginClick,
-}) => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
-  // Default navigation items
-  const defaultNavItems: NavItem[] = [
-    { id: 'landing', label: 'Landing', href: '#', icon: HomeIcon(), isActive: true },
-    { id: 'account', label: 'Account', href: '#', icon: AccountIcon() },
-    { id: 'work', label: 'Work', href: '#', icon: WorkIcon() },
-    { id: 'blog', label: 'Blog', href: '#', icon: BlogIcon() },
-  ];
-
-  const items = navItems || defaultNavItems;
-
-  const handleMenuToggle = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+const Navbar: React.FC<NavbarProps> = () => {
+  const [menuOpen, setMenuOpen] = React.useState(false);
 
   return (
-    <header className="flex flex-wrap md:justify-start md:flex-nowrap z-50 w-full bg-blue-600">
-      <nav className="relative max-w-5xl w-full md:flex md:items-center md:justify-between md:gap-3 mx-auto px-4 sm:px-6 lg:px-8 py-2">
-        {/* Logo w/ Collapse Button */}
-        <div className="flex items-center justify-between">
-          <a
-            href={brandHref}
-            className="flex-none font-semibold text-xl text-white focus:outline-hidden focus:opacity-80"
-            aria-label="Brand"
-          >
-            {brandName}
+    <header className="w-full bg-black py-2 px-4 rounded-2xl shadow-lg mt-1">
+      <nav className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* Logo y hamburguesa */}
+        <div className="flex items-center gap-4">
+          <a href="#" className="flex items-center justify-center h-12 px-6 rounded-full bg-transparent border-2 border-white shadow font-extrabold text-white text-xl tracking-wide transition-all hover:scale-105 focus:outline-none mr-2">
+            Plasser
           </a>
-
-          {/* Mobile Toggle Button */}
-          <div onClick={handleMenuToggle}>
-            <NavbarMobileToggle isOpen={isMenuOpen} />
-          </div>
+          {/* Hamburguesa solo en móvil */}
+          <button
+            type="button"
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-all focus:outline-none"
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            {/* Icono hamburguesa */}
+            <svg className={menuOpen ? 'hidden' : 'block'} width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <line x1="3" x2="21" y1="6" y2="6" />
+              <line x1="3" x2="21" y1="12" y2="12" />
+              <line x1="3" x2="21" y1="18" y2="18" />
+            </svg>
+            {/* Icono cerrar */}
+            <svg className={menuOpen ? 'block' : 'hidden'} width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
         </div>
 
-        {/* Navigation Menu */}
-        <div
-          id="hs-base-header"
-          className={`hs-collapse ${isMenuOpen ? '' : 'hidden'} overflow-hidden transition-all duration-300 basis-full grow md:block`}
-          aria-labelledby="hs-base-header-collapse"
-        >
-          <div className="overflow-hidden overflow-y-auto max-h-[75vh] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-gray-100 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-track]:bg-neutral-700 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500">
-            <div className="py-2 md:py-0 flex flex-col md:flex-row md:items-center md:justify-end gap-0.5 md:gap-1">
-              {/* Navigation Links */}
-              {items.map((item) => (
-                <NavLink
-                  key={item.id}
-                  href={item.href}
-                  label={item.label}
-                  icon={item.icon}
-                  isActive={item.isActive}
-                  isMobile={true}
-                />
-              ))}
+        {/* Centered nav buttons (desktop) */}
+        <div className="hidden md:flex items-center gap-4">
+          <button type="button" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+            <DataIcon />
+            Monitoring
+          </button>
+          <button type="button" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+            <ReportsIcon />
+            Reports
+          </button>
+        </div>
 
-              {/* Login Button Group */}
-              <div className="relative flex flex-wrap items-center gap-x-1.5 md:ps-2.5 mt-1 md:mt-0 md:ms-1.5 before:block before:absolute before:top-1/2 before:-start-px before:w-px before:h-4 before:bg-white/30 before:-translate-y-1/2">
-                <button
-                  onClick={onLoginClick}
-                  type="button"
-                  className="p-2 w-full flex items-center text-sm text-white/80 hover:text-white focus:outline-hidden focus:text-white cursor-pointer"
-                  aria-label="Log in"
-                >
-                  <LoginIcon />
-                  <span className="ms-3 md:ms-2">Log in</span>
-                </button>
-              </div>
+        {/* Right side: search + user */}
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div className="flex flex-col items-end">
+              <span className="text-white font-semibold text-sm leading-tight">Peter</span>
+              <span className="text-neutral-400 text-xs">@Funkie</span>
+            </div>
+            <div className="relative">
+              <span className="inline-block w-10 h-10 rounded-full bg-neutral-700 border-2 border-neutral-600"></span>
+              <span className="absolute top-0 right-0 block w-5 h-5 bg-red-600 text-xs text-white rounded-full border-2 border-black flex items-center justify-center font-bold" style={{fontSize:'0.75rem',lineHeight:'1.25rem'}}>2</span>
             </div>
           </div>
         </div>
       </nav>
+      {/* Menú móvil */}
+      <div className={`md:hidden transition-all duration-300 ${menuOpen ? 'max-h-40 mt-2' : 'max-h-0 overflow-hidden'} w-full`}> 
+        <div className="flex flex-col gap-2 bg-black rounded-xl px-2 pb-2">
+          <button type="button" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+            <DataIcon />
+            Data
+          </button>
+          <button type="button" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+            <ReportsIcon />
+            Reports
+          </button>
+        </div>
+      </div>
     </header>
   );
 };
