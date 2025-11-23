@@ -1,4 +1,7 @@
 @import "tailwindcss";
+
+@import "preline/variants.css";
+@source "../node_modules/preline/dist/*.js";
 /* 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
