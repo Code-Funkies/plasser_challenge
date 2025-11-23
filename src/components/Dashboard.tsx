@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Operative from "./Operative";
-import type { RiskSegment } from "../types/segment.types";
+import type { RiskSegment, InferenceResponse, Tamping } from "../types/segment.types";
 import Diagnostico from "./Diagnostico";
+
+const API_ENDPOINT = "http://localhost:8000/api/inference";
 
 /**
  * A custom hook to check if the screen width matches a media query.
@@ -31,19 +33,49 @@ const Dashboard: React.FC = () => {
     "diagnostic" | "operative"
   >("diagnostic");
 
-  // Datos del tramo seleccionado
-  const selectedSegment: RiskSegment = {
-    track_id: "Linea_MX_01",
-    km_ini: 126.40283569641367,
-    km_fin: 126.49958298582152,
-    avg_beta: 44.191734281695815,
-    max_geom_dev: 9.069792131801792,
-    gpr_risk_max: 3,
-    defect_density: 0.6855886346229533,
-    traffic_class: "alta",
-    climate_zone: "Frío",
-    prediction: 67.17434257324136,
-  };
+  // Estados para la API
+  const [riskSegments, setRiskSegments] = useState<RiskSegment[]>([]);
+  const [tampings, setTampings] = useState<Tamping[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedSegmentIndex, setSelectedSegmentIndex] = useState<number>(0);
+
+  // Fetch data from API
+  useEffect(() => {
+    const fetchInferenceData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const response = await fetch(API_ENDPOINT);
+        
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        
+        const data: InferenceResponse = await response.json();
+        
+        setRiskSegments(data.risks);
+        setTampings(data.tampings);
+        
+        // Seleccionar el primer segmento por defecto
+        if (data.risks.length > 0) {
+          setSelectedSegmentIndex(0);
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : "Error desconocido al cargar los datos";
+        setError(errorMessage);
+        console.error("Error fetching inference data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInferenceData();
+  }, []);
+
+  // Obtener el segmento seleccionado
+  const selectedSegment = riskSegments[selectedSegmentIndex];
 
   const gridContainerStyle: React.CSSProperties = {
     display: "grid",
@@ -67,6 +99,71 @@ const Dashboard: React.FC = () => {
     justifyContent: "center",
     minHeight: isMobile ? "40vh" : "auto", // Ensure map has a minimum height on mobile
   };
+
+  // Renderizado con manejo de estados
+  if (loading) {
+    return (
+      <section
+        style={{
+          padding: "1.5rem",
+          backgroundColor: "#f9fafb",
+          borderRadius: "8px",
+        }}
+      >
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-gray-600 border-r-transparent mb-4"></div>
+            <p className="text-gray-600 font-medium">Cargando datos del dashboard...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section
+        style={{
+          padding: "1.5rem",
+          backgroundColor: "#f9fafb",
+          borderRadius: "8px",
+        }}
+      >
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center bg-white rounded-lg shadow-md p-6 max-w-md">
+            <span className="material-symbols-outlined text-red-600 text-5xl mb-4">error</span>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Error al cargar los datos</h3>
+            <p className="text-gray-600 mb-4">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-black text-white px-6 py-2 rounded-full font-semibold hover:bg-gray-800 transition-all"
+            >
+              Reintentar
+            </button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (!selectedSegment) {
+    return (
+      <section
+        style={{
+          padding: "1.5rem",
+          backgroundColor: "#f9fafb",
+          borderRadius: "8px",
+        }}
+      >
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center bg-white rounded-lg shadow-md p-6">
+            <span className="material-symbols-outlined text-gray-400 text-5xl mb-4">inbox</span>
+            <p className="text-gray-600 font-medium">No hay datos disponibles</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
