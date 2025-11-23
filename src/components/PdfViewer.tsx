@@ -58,8 +58,8 @@ const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
                     file={pdfUrl}
                     onLoadSuccess={onDocumentLoadSuccess}
                     className="flex flex-col items-center"
-                    loading={<div className="p-10 text-gray-500">Cargando documento...</div>}
-                    error={<div className="p-10 text-red-500">Error cargando PDF</div>}
+                    loading={<div className="p-10 text-gray-500">Loading document...</div>}
+                    error={<div className="p-10 text-red-500">Error when trying to load the PDF</div>}
                 >
                     <Page 
                         // 4. Usamos el estado dinámico pageNumber en lugar de un '1' fijo
@@ -81,11 +81,11 @@ const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
                         onClick={previousPage}
                         className="px-5 py-2 bg-neutral-700 text-white rounded-full text-sm hover:bg-neutral-600 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors"
                     >
-                        Anterior
+                        Previous
                     </button>
                     
                     <p className="text-sm text-gray-700 font-medium">
-                        Página {pageNumber} de {numPages}
+                        Page {pageNumber} of {numPages}
                     </p>
 
                     <button
@@ -94,7 +94,7 @@ const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
                         onClick={nextPage}
                         className="px-5 py-2 bg-neutral-700 text-white rounded-full text-sm hover:bg-neutral-600 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors"
                     >
-                        Siguiente
+                        Next
                     </button>
                 </div>
             )}
