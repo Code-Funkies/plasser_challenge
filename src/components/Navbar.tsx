@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 // Data icon
 const DataIcon = () => (
@@ -24,7 +25,9 @@ const SearchIcon = () => (
 );
 
 interface NavbarProps {
-  // Puedes expandir si necesitas props
+  brandName?: string;
+  brandHref?: string;
+  onLoginClick?: () => void;
 }
 
 /**
@@ -41,7 +44,7 @@ interface NavbarProps {
  * @param onLoginClick - Callback for login button click
  */
 
-const Navbar: React.FC<NavbarProps> = () => {
+const Navbar: React.FC<NavbarProps> = ({ brandName, brandHref, onLoginClick }) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
 
   return (
@@ -49,9 +52,9 @@ const Navbar: React.FC<NavbarProps> = () => {
       <nav className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo y hamburguesa */}
         <div className="flex items-center gap-4">
-          <a href="#" className="flex items-center justify-center h-12 px-6 rounded-full bg-transparent border-2 border-white shadow font-extrabold text-white text-xl tracking-wide transition-all hover:scale-105 focus:outline-none mr-2">
-            Plasser
-          </a>
+          <Link to={brandHref || '/'} className="flex items-center justify-center h-12 px-6 rounded-full bg-transparent border-2 border-white shadow font-extrabold text-white text-xl tracking-wide transition-all hover:scale-105 focus:outline-none mr-2">
+            {brandName || 'Plasser'}
+          </Link>
           {/* Hamburguesa solo en móvil */}
           <button
             type="button"
@@ -76,14 +79,14 @@ const Navbar: React.FC<NavbarProps> = () => {
 
         {/* Centered nav buttons (desktop) */}
         <div className="hidden md:flex items-center gap-4">
-          <button type="button" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+          <Link to="/" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
             <DataIcon />
             Monitoring
-          </button>
-          <button type="button" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+          </Link>
+          <Link to="/report" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
             <ReportsIcon />
             Reports
-          </button>
+          </Link>
         </div>
 
         {/* Right side: search + user */}
@@ -103,14 +106,14 @@ const Navbar: React.FC<NavbarProps> = () => {
       {/* Menú móvil */}
       <div className={`md:hidden transition-all duration-300 ${menuOpen ? 'max-h-40 mt-2' : 'max-h-0 overflow-hidden'} w-full`}> 
         <div className="flex flex-col gap-2 bg-black rounded-xl px-2 pb-2">
-          <button type="button" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+          <Link to="/" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
             <DataIcon />
             Data
-          </button>
-          <button type="button" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+          </Link>
+          <Link to="/report" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
             <ReportsIcon />
             Reports
-          </button>
+          </Link>
         </div>
       </div>
     </header>
