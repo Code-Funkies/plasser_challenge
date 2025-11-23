@@ -64,9 +64,9 @@ const Dashboard: React.FC = () => {
           setSelectedSegmentIndex(0);
         }
       } catch (err) {
-        const errorMessage = err instanceof Error ? err.message : "Error desconocido al cargar los datos";
+        const errorMessage = err instanceof Error ? err.message : "Uknown error when trying to load the data";
         setError(errorMessage);
-        console.error("Error fetching inference data:", err);
+        console.error("Error when fetching inference data:", err);
       } finally {
         setLoading(false);
       }
@@ -114,7 +114,7 @@ const Dashboard: React.FC = () => {
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-gray-600 border-r-transparent mb-4"></div>
-            <p className="text-gray-600 font-medium">Cargando datos del dashboard...</p>
+            <p className="text-gray-600 font-medium">Loading dashboard data...</p>
           </div>
         </div>
       </section>
@@ -132,14 +132,14 @@ const Dashboard: React.FC = () => {
       >
         <div className="flex items-center justify-center h-96">
           <div className="text-center bg-white rounded-lg shadow-md p-6 max-w-md">
-            <span className="material-symbols-outlined text-red-600 text-5xl mb-4">error</span>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Error al cargar los datos</h3>
+            <span className="material-symbols-outlined text-red-600 text-5xl mb-4">Error</span>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Error when trying to load the data</h3>
             <p className="text-gray-600 mb-4">{error}</p>
             <button
               onClick={() => window.location.reload()}
               className="bg-black text-white px-6 py-2 rounded-full font-semibold hover:bg-gray-800 transition-all"
             >
-              Reintentar
+              Retry
             </button>
           </div>
         </div>
@@ -158,8 +158,8 @@ const Dashboard: React.FC = () => {
       >
         <div className="flex items-center justify-center h-96">
           <div className="text-center bg-white rounded-lg shadow-md p-6">
-            <span className="material-symbols-outlined text-gray-400 text-5xl mb-4">inbox</span>
-            <p className="text-gray-600 font-medium">No hay datos disponibles</p>
+            <span className="material-symbols-outlined text-gray-400 text-5xl mb-4">Inbox</span>
+            <p className="text-gray-600 font-medium">There's no available data</p>
           </div>
         </div>
       </section>
@@ -190,7 +190,7 @@ const Dashboard: React.FC = () => {
             {/* Encabezado con información del tramo y botones de navegación */}
             <div className="flex items-center justify-between gap-4 mb-4">
               <div className="bg-transparent rounded-lg p-4 text-black flex flex-col">
-                <h2 className="text-4xl font-bold mb-1 w-max">TRAMO</h2>
+                <h2 className="text-4xl font-bold mb-1 w-max">SECTOR</h2>
                 <p className="text-sm opacity-90 w-max">
                   {selectedSegment.track_id} • {selectedSegment.km_ini.toFixed(3)}{" "}
                   km - {selectedSegment.km_fin.toFixed(3)} km
@@ -207,8 +207,8 @@ const Dashboard: React.FC = () => {
                       : "bg-white text-gray-500 shadow hover:text-gray-700 hover:shadow-md"
                   }`}
                 >
-                  <span className="material-symbols-outlined">analytics</span>
-                  <span>Diagnostico</span>
+                  <span className="material-symbols-outlined">Analytics</span>
+                  <span>Diagnostics</span>
                 </button>
                 <button
                   onClick={() => setSelectedSection("operative")}
@@ -218,8 +218,8 @@ const Dashboard: React.FC = () => {
                       : "bg-white text-gray-500 shadow hover:text-gray-700 hover:shadow-md"
                   }`}
                 >
-                  <span className="material-symbols-outlined">monitoring</span>
-                  <span>Operativo</span>
+                  <span className="material-symbols-outlined">Monitoring</span>
+                  <span>Operative</span>
                 </button>
               </div>
             </div>
