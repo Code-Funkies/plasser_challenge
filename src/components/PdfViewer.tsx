@@ -14,12 +14,19 @@ interface AIReport {
     recommendations: string[];
 }
 
-const PdfViewer = () => {
+interface PdfViewerProps {
+    pdfUrl?: string;
+    onTicketApproved?: (ticketId: string) => void;
+}
+
+const PdfViewer = ({ onTicketApproved }: PdfViewerProps) => {
     const [data, setData] = useState<MaintenanceData | null>(null);
     const [aiReport, setAiReport] = useState<AIReport | null>(null);
     const [loading, setLoading] = useState(true);
     const [aiLoading, setAiLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [showModal, setShowModal] = useState(false);
+    const [approvedTicket, setApprovedTicket] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -79,6 +86,19 @@ const PdfViewer = () => {
         } finally {
             setAiLoading(false);
         }
+    };
+
+    const handleApproveReport = () => {
+        const ticketId = `MT-${Date.now().toString().slice(-8)}`;
+        setApprovedTicket(ticketId);
+        setShowModal(true);
+        if (onTicketApproved) {
+            onTicketApproved(ticketId);
+        }
+    };
+
+    const closeModal = () => {
+        setShowModal(false);
     };
 
     if (loading) {
@@ -225,9 +245,40 @@ const PdfViewer = () => {
     }];
 
     return (
-        <div className="flex flex-col bg-gray-100 p-6 rounded shadow w-full h-full overflow-y-auto">
-            {/* Report text section */}
-            <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+        <>
+            {/* Modal */}
+            {showModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg shadow-2xl p-8 max-w-md w-full mx-4 transform transition-all animate-in">
+                        <div className="flex flex-col items-center">
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                                <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">Maintenance Approved!</h2>
+                            <p className="text-gray-600 text-center mb-4">
+                                The maintenance order has been successfully approved
+                            </p>
+                            <div className="bg-gray-100 rounded-lg p-4 mb-6 w-full">
+                                <p className="text-sm text-gray-600 mb-1">Ticket ID:</p>
+                                <p className="text-xl font-mono font-bold text-neutral-900">{approvedTicket}</p>
+                            </div>
+                            <button 
+                                onClick={closeModal}
+                                className="bg-neutral-900 text-white px-6 py-3 rounded-lg hover:bg-neutral-700 transition-colors font-semibold w-full"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Main Content */}
+            <div className="flex flex-col bg-gray-100 p-6 rounded shadow w-full h-full overflow-y-auto">
+                {/* Report text section */}
+                <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
                 <h1 className="text-3xl font-bold text-gray-800 mb-4">
                     Predictive Maintenance Report
                 </h1>
@@ -287,7 +338,7 @@ const PdfViewer = () => {
             </div>
 
             {/* Chart section */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
+            <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">
                     Maintenance Cost Projection
                 </h2>
@@ -298,7 +349,37 @@ const PdfViewer = () => {
                     height={350} 
                 />
             </div>
+
+            {/* Approve Button */}
+            {aiReport && !approvedTicket && (
+                <div className="bg-white p-6 rounded-lg shadow-sm flex justify-center">
+                    <button 
+                        onClick={handleApproveReport}
+                        className="bg-green-600 hover:bg-green-700 text-white font-bold py-4 px-8 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-3"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Approve and Send Maintenance Order
+                    </button>
+                </div>
+            )}
+
+            {approvedTicket && (
+                <div className="bg-gradient-to-r from-green-50 to-green-100 border-l-4 border-green-600 p-6 rounded-r-lg shadow-sm">
+                    <div className="flex items-center gap-3">
+                        <svg className="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"></path>
+                        </svg>
+                        <div>
+                            <h3 className="text-xl font-bold text-gray-800">Maintenance Order Approved</h3>
+                            <p className="text-gray-700">Ticket ID: <span className="font-mono font-bold">{approvedTicket}</span></p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
+        </>
     );
 };
 

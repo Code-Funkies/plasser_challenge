@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PdfViewer from './PdfViewer';
+import ApprovedTickets from './ApprovedTickets';
 
 /**
  * A custom hook to check if the screen width matches a media query.
@@ -25,6 +26,11 @@ const useMediaQuery = (query: string): boolean => {
  */
 const Report: React.FC = () => {
   const isMobile = useMediaQuery('(max-width: 1080px)');
+  const [approvedTicketId, setApprovedTicketId] = useState<string | null>(null);
+
+  const handleTicketApproved = (ticketId: string) => {
+    setApprovedTicketId(ticketId);
+  };
 
   const gridContainerStyle: React.CSSProperties = {
     display: 'grid',
@@ -51,15 +57,14 @@ const Report: React.FC = () => {
   return (
     <section style={{ padding: '1.5rem', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
       <div style={gridContainerStyle}>
-        {/* Left Column: Ticket */}
+        {/* Left Column: Approved Tickets */}
         <div style={mapStyle}>
-          <p style={{ color: '#6b7280' }}>Ticket Component Placeholder</p>
+          <ApprovedTickets ticketId={approvedTicketId} />
         </div>
 
-        {/* Right Column: PDF */}
+        {/* Right Column: PDF Viewer */}
         <div style={{ padding: '0', height: '100%' }}>
-          {/* <p style={{ color: '#6b7280' }}>PDF Viewer Component Placeholder</p> */}
-          <PdfViewer pdfUrl='/document2.pdf'/>
+          <PdfViewer pdfUrl='/document2.pdf' onTicketApproved={handleTicketApproved} />
         </div>
       </div>
     </section>
