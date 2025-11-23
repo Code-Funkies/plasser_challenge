@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import './App.css'
 import Navbar from './components/Navbar';
-import Dashboard from './components/dashboard';
+import Dashboard from './components/Dashboard';
 
 async function loadPreline() {
   return import('preline/dist/index.js');
