@@ -52,13 +52,13 @@ const Navbar: React.FC<NavbarProps> = ({ brandName, brandHref, onLoginClick }) =
       <nav className="max-w-7xl mx-auto flex items-center justify-between">
         {/* Logo y hamburguesa */}
         <div className="flex items-center gap-4">
-          <Link to={brandHref || '/'} className="flex items-center justify-center h-12 px-6 rounded-full bg-transparent border-2 border-white shadow font-extrabold text-white text-xl tracking-wide transition-all hover:scale-105 focus:outline-none mr-2">
+          <Link to={brandHref || '/'} className="flex items-center justify-center h-12 px-6 rounded-full bg-transparent border-2 border-[#FEC900] shadow font-extrabold text-white text-xl tracking-wide transition-all hover:scale-105 focus:outline-none mr-2">
             {brandName || 'Plasser'}
           </Link>
           {/* Hamburguesa solo en móvil */}
           <button
             type="button"
-            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-neutral-900 text-white hover:bg-neutral-800 transition-all focus:outline-none"
+            className="md:hidden flex items-center justify-center w-10 h-10 rounded-full bg-neutral-900 text-white hover:bg-[#FEC900] hover:text-[#003576] transition-all focus:outline-none"
             aria-label="Toggle menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
@@ -79,11 +79,11 @@ const Navbar: React.FC<NavbarProps> = ({ brandName, brandHref, onLoginClick }) =
 
         {/* Centered nav buttons (desktop) */}
         <div className="hidden md:flex items-center gap-4">
-          <Link to="/" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+          <Link to="/" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-[#FEC900] hover:text-[#003576] transition-all focus:outline-none gap-2">
             <DataIcon />
             Monitoring
           </Link>
-          <Link to="/report" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-neutral-800 transition-all focus:outline-none gap-2">
+          <Link to="/report" className="flex items-center px-5 py-2 rounded-full bg-neutral-900 text-white font-medium text-base shadow-sm hover:bg-[#FEC900] hover:text-[#003576] transition-all focus:outline-none gap-2">
             <ReportsIcon />
             Reports
           </Link>

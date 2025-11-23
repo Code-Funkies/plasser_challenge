@@ -33,7 +33,7 @@ function App() {
   return (
     <>
       <Navbar
-        brandName="The Funkies"
+        brandName="Plasser & Theurer"
         brandHref="/"
         onLoginClick={handleLoginClick}
       />
