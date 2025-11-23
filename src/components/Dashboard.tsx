@@ -182,39 +182,41 @@ const Dashboard: React.FC = () => {
         {/* Right Column: Diagnostico */}
         <div style={{ padding: "0", height: "100%" }}>
           <div>
-            {/* Encabezado con información del tramo */}
-            <div className="bg-transparent rounded-lg p-4 text-black flex flex-col mb-4">
-              <h2 className="text-4xl font-bold mb-1 w-max">TRAMO</h2>
-              <p className="text-sm opacity-90 w-max">
-                {selectedSegment.track_id} • {selectedSegment.km_ini.toFixed(3)}{" "}
-                km - {selectedSegment.km_fin.toFixed(3)} km
-              </p>
-            </div>
+            {/* Encabezado con información del tramo y botones de navegación */}
+            <div className="flex items-center justify-between gap-4 mb-4">
+              <div className="bg-transparent rounded-lg p-4 text-black flex flex-col">
+                <h2 className="text-4xl font-bold mb-1 w-max">TRAMO</h2>
+                <p className="text-sm opacity-90 w-max">
+                  {selectedSegment.track_id} • {selectedSegment.km_ini.toFixed(3)}{" "}
+                  km - {selectedSegment.km_fin.toFixed(3)} km
+                </p>
+              </div>
 
-            {/* Botones de navegación */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <button
-                onClick={() => setSelectedSection("diagnostic")}
-                className={`flex items-center justify-center h-12 px-6 rounded-full font-semibold text-base tracking-wide transition-all focus:outline-none cursor-pointer gap-2 ${
-                  selectedSection === "diagnostic"
-                    ? "bg-black text-white shadow-lg"
-                    : "bg-white text-gray-500 shadow hover:text-gray-700 hover:shadow-md"
-                }`}
-              >
-                <span className="material-symbols-outlined">analytics</span>
-                <span>Diagnostico</span>
-              </button>
-              <button
-                onClick={() => setSelectedSection("operative")}
-                className={`flex items-center justify-center h-12 px-6 rounded-full font-semibold text-base tracking-wide transition-all focus:outline-none cursor-pointer gap-2 ${
-                  selectedSection === "operative"
-                    ? "bg-black text-white shadow-lg"
-                    : "bg-white text-gray-500 shadow hover:text-gray-700 hover:shadow-md"
-                }`}
-              >
-                <span className="material-symbols-outlined">monitoring</span>
-                <span>Operativo</span>
-              </button>
+              {/* Botones de navegación */}
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  onClick={() => setSelectedSection("diagnostic")}
+                  className={`flex items-center justify-center h-12 px-6 rounded-full font-semibold text-base tracking-wide transition-all focus:outline-none cursor-pointer gap-2 ${
+                    selectedSection === "diagnostic"
+                      ? "bg-black text-white shadow-lg"
+                      : "bg-white text-gray-500 shadow hover:text-gray-700 hover:shadow-md"
+                  }`}
+                >
+                  <span className="material-symbols-outlined">analytics</span>
+                  <span>Diagnostico</span>
+                </button>
+                <button
+                  onClick={() => setSelectedSection("operative")}
+                  className={`flex items-center justify-center h-12 px-6 rounded-full font-semibold text-base tracking-wide transition-all focus:outline-none cursor-pointer gap-2 ${
+                    selectedSection === "operative"
+                      ? "bg-black text-white shadow-lg"
+                      : "bg-white text-gray-500 shadow hover:text-gray-700 hover:shadow-md"
+                  }`}
+                >
+                  <span className="material-symbols-outlined">monitoring</span>
+                  <span>Operativo</span>
+                </button>
+              </div>
             </div>
 
             {selectedSection === "diagnostic" && (
