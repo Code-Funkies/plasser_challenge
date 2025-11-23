@@ -1,103 +1,236 @@
-import { useState, useEffect, useRef } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
-import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
+import { useState, useEffect } from 'react';
+import Chart from 'react-apexcharts';
+import type { ApexOptions } from 'apexcharts';
 
-pdfjs.GlobalWorkerOptions.workerSrc = pdfWorker;
+interface MaintenanceData {
+    series_data: Array<{ x: number; y: number }>;
+    annotations: Array<{ month: number; cost: number; label: string }>;
+    avg_risk_factor: number;
+    total_points: number;
+}
 
-const PdfViewer = ({ pdfUrl }: { pdfUrl: string }) => {
-    const [numPages, setNumPages] = useState<number | null>(null);
-    const [pageNumber, setPageNumber] = useState(1); // 1. Nuevo estado para la página actual
-    const [containerWidth, setContainerWidth] = useState<number>(0);
-    const containerRef = useRef<HTMLDivElement>(null);
+const PdfViewer = () => {
+    const [data, setData] = useState<MaintenanceData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // Lógica del ResizeObserver (Responsividad)
     useEffect(() => {
-        const observer = new ResizeObserver((entries) => {
-            if (entries[0]) {
-                const newWidth = entries[0].contentRect.width;
-                setContainerWidth(newWidth);
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const response = await fetch('http://localhost:8000/api/maintenance-windows', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        critical_points: [0.2, 0.3, 0.25, 0.4, 0.5]
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error loading data');
+                }
+
+                const apiData: MaintenanceData = await response.json();
+                setData(apiData);
+            } catch (err) {
+                setError(err instanceof Error ? err.message : 'Unknown error');
+            } finally {
+                setLoading(false);
             }
-        });
+        };
 
-        if (containerRef.current) {
-            observer.observe(containerRef.current);
-        }
-
-        return () => observer.disconnect();
+        fetchData();
     }, []);
 
-    // 2. Al cargar el documento, guardamos el total de páginas
-    function onDocumentLoadSuccess({ numPages }: { numPages: number }) {
-        setNumPages(numPages);
-        setPageNumber(1); // Reseteamos a la página 1 por si cambia el archivo
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-full p-10">
+                <div className="text-gray-500">Loading report data...</div>
+            </div>
+        );
     }
 
-    // 3. Funciones de navegación
-    function changePage(offset: number) {
-        setPageNumber(prevPageNumber => prevPageNumber + offset);
+    if (error) {
+        return (
+            <div className="flex items-center justify-center h-full p-10">
+                <div className="text-red-500">Error: {error}</div>
+            </div>
+        );
     }
 
-    function previousPage() {
-        changePage(-1);
+    if (!data) {
+        return null;
     }
 
-    function nextPage() {
-        changePage(1);
-    }
+    // Calculate dates from current time + delta months
+    const currentDate = new Date();
+    const seriesWithDates = data.series_data.map(point => {
+        const futureDate = new Date(currentDate);
+        futureDate.setMonth(currentDate.getMonth() + point.x);
+        return {
+            x: futureDate.getTime(), // Convert to timestamp
+            y: point.y
+        };
+    });
+
+    const annotationsWithDates = data.annotations.map(point => {
+        const futureDate = new Date(currentDate);
+        futureDate.setMonth(currentDate.getMonth() + point.month);
+        return {
+            ...point,
+            timestamp: futureDate.getTime(),
+            dateString: futureDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        };
+    });
+
+    const options: ApexOptions = {
+        chart: {
+            type: 'area',
+            height: 350,
+            fontFamily: 'Helvetica, Arial, sans-serif',
+        },
+        colors: ['#008FFB'],
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.7,
+                opacityTo: 0.9,
+                stops: [0, 90, 100]
+            }
+        },
+        dataLabels: { enabled: false },
+        stroke: { curve: 'smooth', width: 2 },
+        xaxis: {
+            type: 'datetime',
+            title: { text: 'Predicted Maintenance Date' },
+            labels: {
+                format: 'MMM yyyy',
+                datetimeUTC: false
+            }
+        },
+        yaxis: {
+            title: { text: 'Projected Cost ($)' },
+            labels: {
+                formatter: (value) => {
+                    return "$" + value.toFixed(0);
+                }
+            }
+        },
+        annotations: {
+            xaxis: annotationsWithDates.map(point => ({
+                x: point.timestamp,
+                strokeDashArray: 0,
+                borderColor: '#FEB019',
+                label: {
+                    borderColor: '#FEB019',
+                    style: {
+                        color: '#fff',
+                        background: '#FEB019',
+                    },
+                    text: point.dateString,
+                }
+            })),
+            points: annotationsWithDates.map(point => ({
+                x: point.timestamp,
+                y: point.cost,
+                marker: {
+                    size: 8,
+                    fillColor: '#fff',
+                    strokeColor: 'red',
+                    radius: 2,
+                },
+                label: {
+                    borderColor: '#FF4560',
+                    offsetY: 0,
+                    style: {
+                        color: '#fff',
+                        background: '#FF4560',
+                    },
+                    text: `Min: $${point.cost.toFixed(0)}`,
+                }
+            }))
+        }
+    };
+
+    const series = [{
+        name: "Projected Cost",
+        data: seriesWithDates
+    }];
 
     return (
-        <div 
-            ref={containerRef} 
-            className="flex flex-col bg-gray-100 p-4 rounded shadow w-full h-full relative"
-        >
-            {/* Contenedor con scroll para el documento */}
-            <div className="flex-1 overflow-y-auto w-full flex justify-center">
-                <Document
-                    file={pdfUrl}
-                    onLoadSuccess={onDocumentLoadSuccess}
-                    className="flex flex-col items-center"
-                    loading={<div className="p-10 text-gray-500">Loading document...</div>}
-                    error={<div className="p-10 text-red-500">Error when trying to load the PDF</div>}
-                >
-                    <Page 
-                        // 4. Usamos el estado dinámico pageNumber en lugar de un '1' fijo
-                        pageNumber={pageNumber} 
-                        width={containerWidth ? Math.min(containerWidth - 40, 800) : undefined}
-                        renderTextLayer={false} 
-                        renderAnnotationLayer={false}
-                        className="shadow-lg mb-4 bg-white" 
-                    />
-                </Document>
+        <div className="flex flex-col bg-gray-100 p-6 rounded shadow w-full h-full overflow-y-auto">
+            {/* Report text section */}
+            <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+                <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                    Predictive Maintenance Report
+                </h1>
+                
+                <div className="space-y-4 text-gray-700">
+                    <section>
+                        <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                            Executive Summary
+                        </h2>
+                        <p className="leading-relaxed">
+                            This report presents a cost projection analysis for preventive maintenance 
+                            based on {data.total_points} identified critical points. The average risk 
+                            factor calculated is {(data.avg_risk_factor * 100).toFixed(1)}%.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                            Optimal Maintenance Windows
+                        </h2>
+                        <p className="leading-relaxed">
+                            {data.annotations.length} optimal maintenance windows have been identified 
+                            where projected costs reach their minimum values. Performing maintenance 
+                            during these windows can result in significant savings.
+                        </p>
+                        <ul className="list-disc list-inside mt-2 space-y-1">
+                            {data.annotations.map((annotation, idx) => {
+                                const futureDate = new Date();
+                                futureDate.setMonth(futureDate.getMonth() + annotation.month);
+                                const dateStr = futureDate.toLocaleDateString('en-US', { 
+                                    month: 'long', 
+                                    year: 'numeric' 
+                                });
+                                return (
+                                    <li key={idx}>
+                                        <strong>{dateStr}:</strong> Minimum cost of ${annotation.cost.toFixed(2)}
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    </section>
+
+                    <section>
+                        <h2 className="text-xl font-semibold text-gray-800 mb-2">
+                            Recommendations
+                        </h2>
+                        <p className="leading-relaxed">
+                            It is recommended to schedule maintenance interventions during the identified 
+                            windows to optimize costs and minimize operational impact. The analysis projects 
+                            costs over a {Math.max(...data.series_data.map(d => d.x)).toFixed(1)} month horizon.
+                        </p>
+                    </section>
+                </div>
             </div>
 
-            {/* 5. Barra de controles de navegación */}
-            {numPages && (
-                <div className="mt-2 flex items-center justify-center gap-4 bg-white p-2 rounded-lg shadow-sm border border-gray-200 sticky bottom-0 z-10">
-                    <button
-                        type="button"
-                        disabled={pageNumber <= 1}
-                        onClick={previousPage}
-                        className="px-5 py-2 bg-neutral-700 text-white rounded-full text-sm hover:bg-neutral-600 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors"
-                    >
-                        Previous
-                    </button>
-                    
-                    <p className="text-sm text-gray-700 font-medium">
-                        Page {pageNumber} of {numPages}
-                    </p>
-
-                    <button
-                        type="button"
-                        disabled={pageNumber >= numPages}
-                        onClick={nextPage}
-                        className="px-5 py-2 bg-neutral-700 text-white rounded-full text-sm hover:bg-neutral-600 disabled:bg-neutral-400 disabled:cursor-not-allowed transition-colors"
-                    >
-                        Next
-                    </button>
-                </div>
-            )}
+            {/* Chart section */}
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                    Maintenance Cost Projection
+                </h2>
+                <Chart 
+                    options={options} 
+                    series={series} 
+                    type="area" 
+                    height={350} 
+                />
+            </div>
         </div>
     );
 };
