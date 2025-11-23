@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import './App.css'
 import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
+import Report from './components/Report';
 
 async function loadPreline() {
   return import('preline/dist/index.js');
@@ -35,7 +37,13 @@ function App() {
         brandHref="/"
         onLoginClick={handleLoginClick}
       />
-      <Dashboard />
+
+      <main style={{ padding: '1rem' }}>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/report" element={<Report />} />
+        </Routes>
+      </main>
     </>
   )
 }
