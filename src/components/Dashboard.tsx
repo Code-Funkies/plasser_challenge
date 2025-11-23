@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Operative from "./Operative";
 import type { RiskSegment, InferenceResponse, Tamping } from "../types/segment.types";
 import Diagnostico from "./Diagnostico";
+import RailwayMap from "./RailWayMap";
 
 const API_ENDPOINT = "http://localhost:8000/api/inference";
 
@@ -176,7 +177,11 @@ const Dashboard: React.FC = () => {
       <div style={gridContainerStyle}>
         {/* Left Column: Map */}
         <div style={mapStyle}>
-          <p style={{ color: "#6b7280" }}>Map Component Placeholder</p>
+          {/* <p style={{ color: "#6b7280" }}>Map Component Placeholder</p> */}
+          {/* <div className="col-span-1 lg:col-span-1 bg-white p-4 rounded-xl shadow-sm h-[600px]">  */}
+            <RailwayMap />
+            
+        {/* </div> */}
         </div>
 
         {/* Right Column: Diagnostico */}
