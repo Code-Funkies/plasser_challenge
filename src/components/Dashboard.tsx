@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Operative from "./Operative";
+import type { RiskSegment } from "../types/segment.types";
 import Diagnostico from "./Diagnostico";
 
 /**
@@ -29,6 +30,20 @@ const Dashboard: React.FC = () => {
   const [selectedSection, setSelectedSection] = useState<
     "diagnostic" | "operative"
   >("diagnostic");
+
+  // Datos del tramo seleccionado
+  const selectedSegment: RiskSegment = {
+    track_id: "Linea_MX_01",
+    km_ini: 126.40283569641367,
+    km_fin: 126.49958298582152,
+    avg_beta: 44.191734281695815,
+    max_geom_dev: 9.069792131801792,
+    gpr_risk_max: 3,
+    defect_density: 0.6855886346229533,
+    traffic_class: "alta",
+    climate_zone: "Frío",
+    prediction: 67.17434257324136,
+  };
 
   const gridContainerStyle: React.CSSProperties = {
     display: "grid",
@@ -70,24 +85,47 @@ const Dashboard: React.FC = () => {
         {/* Right Column: Diagnostico */}
         <div style={{ padding: "0", height: "100%" }}>
           <div>
-            <div className="flex items-center justify-center gap-2">
+            {/* Encabezado con información del tramo */}
+            <div className="bg-transparent rounded-lg p-4 text-black flex flex-col mb-4">
+              <h2 className="text-4xl font-bold mb-1 w-max">TRAMO</h2>
+              <p className="text-sm opacity-90 w-max">
+                {selectedSegment.track_id} • {selectedSegment.km_ini.toFixed(3)}{" "}
+                km - {selectedSegment.km_fin.toFixed(3)} km
+              </p>
+            </div>
+
+            {/* Botones de navegación */}
+            <div className="flex items-center justify-center gap-2 mb-4">
               <button
                 onClick={() => setSelectedSection("diagnostic")}
-                className="flex items-center justify-center h-12 px-6 rounded-full bg-transparent shadow font-semibold text-black text-base tracking-wide transition-all hover:scale-105 focus:outline-none mr-2 cursor-pointer gap-2"
+                className={`flex items-center justify-center h-12 px-6 rounded-full font-semibold text-base tracking-wide transition-all focus:outline-none cursor-pointer gap-2 ${
+                  selectedSection === "diagnostic"
+                    ? "bg-black text-white shadow-lg"
+                    : "bg-white text-gray-500 shadow hover:text-gray-700 hover:shadow-md"
+                }`}
               >
                 <span className="material-symbols-outlined">analytics</span>
                 <span>Diagnostico</span>
               </button>
               <button
                 onClick={() => setSelectedSection("operative")}
-                className="flex items-center justify-center h-12 px-6 rounded-full bg-transparent shadow font-semibold text-black text-base tracking-wide transition-all hover:scale-105 focus:outline-none mr-2 cursor-pointer gap-2"
+                className={`flex items-center justify-center h-12 px-6 rounded-full font-semibold text-base tracking-wide transition-all focus:outline-none cursor-pointer gap-2 ${
+                  selectedSection === "operative"
+                    ? "bg-black text-white shadow-lg"
+                    : "bg-white text-gray-500 shadow hover:text-gray-700 hover:shadow-md"
+                }`}
               >
                 <span className="material-symbols-outlined">monitoring</span>
                 <span>Operativo</span>
               </button>
             </div>
-            {selectedSection === "diagnostic" && <Diagnostico />}
-            {selectedSection === "operative" && <Operative />}
+
+            {selectedSection === "diagnostic" && (
+              <Diagnostico segment={selectedSegment} />
+            )}
+            {selectedSection === "operative" && (
+              <Operative segment={selectedSegment} />
+            )}
           </div>
         </div>
       </div>
