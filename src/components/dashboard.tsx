@@ -24,7 +24,7 @@ const useMediaQuery = (query: string): boolean => {
  * A reusable dashboard component to display a map and information.
  */
 const Dashboard: React.FC = () => {
-  const isMobile = useMediaQuery('(max-width: 768px)');
+  const isMobile = useMediaQuery('(max-width: 1080px)');
 
   const gridContainerStyle: React.CSSProperties = {
     display: 'grid',
@@ -32,7 +32,7 @@ const Dashboard: React.FC = () => {
     // On desktop, use a 2-column layout. On mobile, switch to a 1-column layout.
     gridTemplateColumns: isMobile ? '1fr' : '0.4fr 1fr',
     // Adjust height for mobile to allow content to flow.
-    height: isMobile ? 'auto' : '70vh',
+    height: isMobile ? 'auto' : 'auto',
   };
 
   const mapStyle: React.CSSProperties = {
