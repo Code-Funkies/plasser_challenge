@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PdfViewer from './PdfViewer';
 
 /**
  * A custom hook to check if the screen width matches a media query.
@@ -57,7 +58,8 @@ const Report: React.FC = () => {
 
         {/* Right Column: PDF */}
         <div style={{ padding: '0', height: '100%' }}>
-          <p style={{ color: '#6b7280' }}>PDF Viewer Component Placeholder</p>
+          {/* <p style={{ color: '#6b7280' }}>PDF Viewer Component Placeholder</p> */}
+          <PdfViewer pdfUrl='/document2.pdf'/>
         </div>
       </div>
     </section>
