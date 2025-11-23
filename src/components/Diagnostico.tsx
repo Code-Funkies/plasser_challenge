@@ -46,7 +46,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ segment }) => {
             offsetY: 60,
           },
           value: {
-            offsetY: 10,
+            offsetY: -5,
             fontSize: '32px',
             color: '#111827',
             formatter: (val: number) => `${val.toFixed(1)}`,
