@@ -23,37 +23,37 @@ const Operative: React.FC<OperativeProps> = ({ segment }) => {
         {/* Tarjetas de KPIs */}
         <div className="grid grid-cols-2 gap-4">
           <KPICard
-            label="Risk Score"
+            label="Risk Prediction"
             value={segment.prediction.toFixed(1)}
             colorClass={getRiskColorClass(segment.prediction)}
           />
           <KPICard
-            label="β-Ballast promedio"
+            label="Avg. β-Ballast"
             value={segment.avg_beta.toFixed(2)}
             colorClass="text-indigo-600"
           />
           <KPICard
-            label="Desv. geométrica máx. (mm)"
+            label="Max Geometric Deviation (mm)"
             value={segment.max_geom_dev.toFixed(2)}
             colorClass="text-purple-600"
           />
           <KPICard
-            label="GPR Risk Max"
+            label="Max GPR Risk"
             value={segment.gpr_risk_max}
             colorClass="text-orange-600"
           />
           <KPICard
-            label="Densidad de defectos"
+            label="Deffect Density"
             value={segment.defect_density.toFixed(3)}
             colorClass="text-pink-600"
           />
           <KPICard
-            label="Clase de tráfico"
+            label="Traffic Class"
             value={segment.traffic_class.charAt(0).toUpperCase() + segment.traffic_class.slice(1)}
             colorClass="text-teal-600"
           />
           <KPICard
-            label="Zona climática"
+            label="Climate Zone"
             value={segment.climate_zone}
             colorClass="text-cyan-600"
           />

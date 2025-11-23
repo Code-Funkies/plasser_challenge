@@ -64,7 +64,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ segment }) => {
     stroke: {
       lineCap: 'round',
     },
-    labels: ['Índice de riesgo'],
+    labels: ['Risk Index'],
   };
 
   const gaugeSeries = [segment.prediction];
@@ -97,7 +97,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ segment }) => {
       },
     },
     xaxis: {
-      categories: ['β-Ballast', 'Geom. (mm)', 'GPR riesgo', 'Defectos'],
+      categories: ['β-Ballast', 'Geom. (mm)', 'Risk GPR', 'Defects'],
       max: 1,
       labels: {
         formatter: (val: string) => parseFloat(val).toFixed(1),
@@ -123,7 +123,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ segment }) => {
 
   const contributionSeries = [
     {
-      name: 'Contribución normalizada',
+      name: 'Normalized Contribution',
       data: [beta_norm, geom_norm, gpr_norm, defects_norm],
     },
   ];
@@ -196,7 +196,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ segment }) => {
         {/* Gráficas principales */}
         <div className="grid gap-4 md:grid-cols-2">
           {/* Gráfica 1: Gauge del risk score */}
-          <GraphCard title="Índice de riesgo del tramo">
+          <GraphCard title="Sector Risk Score">
             <div className="w-full h-full flex items-center justify-center">
               <ReactApexChart
                 options={gaugeOptions}
@@ -209,7 +209,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ segment }) => {
           </GraphCard>
 
           {/* Gráfica 2: Componentes del riesgo */}
-          <GraphCard title="Componentes del riesgo (normalizados)">
+          <GraphCard title="Risk Componenents (normalized)">
             <div className="w-full h-full flex items-center justify-center">
               <ReactApexChart
                 options={contributionOptions}
@@ -224,7 +224,7 @@ const Diagnostico: React.FC<DiagnosticoProps> = ({ segment }) => {
 
         {/* Gráfica 3: Perfil del tramo */}
         <div className="grid gap-4 md:grid-cols-1">
-          <GraphCard title="Resumen del tramo (km)">
+          <GraphCard title="Sector Overview (km)">
             <div className="w-full h-full flex items-center justify-center">
               <ReactApexChart
                 options={profileOptions}
